@@ -7,14 +7,17 @@
     <Color x:Key="DarkGray2">#1A1A1A</Color>
     <Color x:Key="DarkGray3">#222222</Color>
     <Color x:Key="DarkGray4">#333333</Color>
+    <Color x:Key="DarkGray5">#444444</Color>
     <Color x:Key="LightGray">#CCCCCC</Color>
     <Color x:Key="White">#FFFFFF</Color>
     <Color x:Key="MediumGray">#666666</Color>
     <Color x:Key="BlueAccent">#004080</Color>
     <Color x:Key="BlueAccentDark">#002040</Color>
     <Color x:Key="BlueLight">#AADDFF</Color>
-    <Color x:Key="RedAccent">#CC0000</Color>
-    <Color x:Key="BlueHover">#003366</Color>
+    <Color x:Key="RedAccent1">#CC0000</Color>
+    <Color x:Key="RedAccent2">#300000</Color>
+    <Color x:Key="BlueHover1">#004c99</Color>
+    <Color x:Key="BlueHover2">#001a34</Color>
     
     <!-- Solid Color Brushes -->
     <SolidColorBrush x:Key="NeonGreenBrush" Color="{StaticResource NeonGreen}"/>
@@ -23,13 +26,16 @@
     <SolidColorBrush x:Key="DarkGray2Brush" Color="{StaticResource DarkGray2}"/>
     <SolidColorBrush x:Key="DarkGray3Brush" Color="{StaticResource DarkGray3}"/>
     <SolidColorBrush x:Key="DarkGray4Brush" Color="{StaticResource DarkGray4}"/>
+    <SolidColorBrush x:Key="DarkGray5Brush" Color="{StaticResource DarkGray5}"/>
     <SolidColorBrush x:Key="LightGrayBrush" Color="{StaticResource LightGray}"/>
     <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
     <SolidColorBrush x:Key="MediumGrayBrush" Color="{StaticResource MediumGray}"/>
     <SolidColorBrush x:Key="BlueAccentBrush" Color="{StaticResource BlueAccent}"/>
     <SolidColorBrush x:Key="BlueAccentDarkBrush" Color="{StaticResource BlueAccentDark}"/>
     <SolidColorBrush x:Key="BlueLightBrush" Color="{StaticResource BlueLight}"/>
-    <SolidColorBrush x:Key="RedAccentBrush" Color="{StaticResource RedAccent}"/>
-    <SolidColorBrush x:Key="BlueHoverBrush" Color="{StaticResource BlueHover}"/>
+    <SolidColorBrush x:Key="RedAccent1Brush" Color="{StaticResource RedAccent1}"/>
+    <SolidColorBrush x:Key="RedAccent2Brush" Color="{StaticResource RedAccent2}"/>
+    <SolidColorBrush x:Key="BlueHover1Brush" Color="{StaticResource BlueHover1}"/>
+    <SolidColorBrush x:Key="BlueHover2Brush" Color="{StaticResource BlueHover2}"/>
 </ResourceDictionary>
 

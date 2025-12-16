@@ -154,7 +154,7 @@ namespace DownloadTimeCalculator.ViewModels
             if (speedBits > 0)
             {
                 double totalSeconds = sizeBits / speedBits;
-                
+
                 // TimeSpan overflow kontrolü
                 double maxTimeSpanSeconds = TimeSpan.MaxValue.TotalSeconds;
                 if (totalSeconds > maxTimeSpanSeconds || double.IsInfinity(totalSeconds) || double.IsNaN(totalSeconds))
@@ -178,7 +178,7 @@ namespace DownloadTimeCalculator.ViewModels
 
                     // B) Bitiş Saatini Hesapla (ETA)
                     DateTime finishTime = DateTime.Now.AddSeconds(totalSeconds);
-                    ETA = $"Finish Time: {finishTime:HH:mm}";
+                    ETA = $"Finish Time: {finishTime.ToString("hh:mm tt", System.Globalization.CultureInfo.InvariantCulture)}";
                 }
                 catch (Exception)
                 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Threading;
+using System.Windows;
 using DownloadTimeCalculator.Models;
 using DownloadTimeCalculator.Services.Interfaces;
 using DownloadTimeCalculator.ViewModels.Base;
@@ -14,7 +15,10 @@ namespace DownloadTimeCalculator.ViewModels
         private readonly ISystemPowerService _powerService;
         private DispatcherTimer? _clockTimer;
         private bool _isAutoExitEnabled = false;
+
         private bool _isShutdownPending = false;
+        private bool _isThresholdError = false;
+        private bool _isDurationError = false;
         private DateTime? _lowSpeedStartTime = null;
         private const double MIN_DOWNLOAD_SPEED_THRESHOLD = 12500; // 100 kbps = 100000 bits/s = 12500 bytes/s
         private const int LOW_SPEED_DURATION_SECONDS = 60; // 60 seconds (1 minute)
@@ -65,6 +69,30 @@ namespace DownloadTimeCalculator.ViewModels
             get => _isAutoExitEnabled;
             set
             {
+                if (value)
+                {
+                    // Validation Check before enabling
+                    bool hasError = false;
+                    if (!_thresholdValue.HasValue)
+                    {
+                        IsThresholdError = true;
+                        hasError = true;
+                    }
+                    if (!_durationSeconds.HasValue)
+                    {
+                        IsDurationError = true;
+                        hasError = true;
+                    }
+
+                    if (hasError)
+                    {
+                        // Do not enable, notify change to keep UI in sync (off)
+                        // Use Dispatcher to ensure UI updates after current binding operation
+                        Application.Current.Dispatcher.InvokeAsync(() => OnPropertyChanged(nameof(IsAutoExitEnabled)));
+                        return;
+                    }
+                }
+
                 if (SetProperty(ref _isAutoExitEnabled, value))
                 {
                     _lowSpeedStartTime = null;
@@ -72,6 +100,18 @@ namespace DownloadTimeCalculator.ViewModels
                     CountdownText = string.Empty;
                 }
             }
+        }
+
+        public bool IsThresholdError
+        {
+            get => _isThresholdError;
+            set => SetProperty(ref _isThresholdError, value);
+        }
+
+        public bool IsDurationError
+        {
+            get => _isDurationError;
+            set => SetProperty(ref _isDurationError, value);
         }
 
         public IEnumerable<PowerActionType> PowerActions => Enum.GetValues(typeof(PowerActionType)).Cast<PowerActionType>();
@@ -98,7 +138,16 @@ namespace DownloadTimeCalculator.ViewModels
         public double? ThresholdValue
         {
             get => _thresholdValue;
-            set => SetProperty(ref _thresholdValue, value);
+            set
+            {
+                if (SetProperty(ref _thresholdValue, value))
+                {
+                    if (value.HasValue)
+                    {
+                        IsThresholdError = false;
+                    }
+                }
+            }
         }
 
         public int ThresholdUnitIndex
@@ -110,7 +159,16 @@ namespace DownloadTimeCalculator.ViewModels
         public int? DurationSeconds
         {
             get => _durationSeconds;
-            set => SetProperty(ref _durationSeconds, value);
+            set
+            {
+                if (SetProperty(ref _durationSeconds, value))
+                {
+                    if (value.HasValue)
+                    {
+                        IsDurationError = false;
+                    }
+                }
+            }
         }
 
         public string CountdownText
@@ -130,7 +188,7 @@ namespace DownloadTimeCalculator.ViewModels
 
         private void ClockTimer_Tick(object? sender, EventArgs e)
         {
-            CurrentTime = DateTime.Now.ToString("HH:mm:ss");
+            CurrentTime = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         private void NetworkService_NetworkStatsUpdated(object? sender, NetworkStats stats)

@@ -12,6 +12,8 @@ interface with neon green accents and robust functionality for power users.
 - Supports various units for file size (MB, GB, TB) and speed (KB/s, MB/s, Mbps, Gbps).
 - Provides instant results for different connection standards.
 
+![Download Time Calculator](DownCalcTimer1.png)
+
 ### 2. Auto Exit System
 
 - **Automated Actions**: Automatically perform system power actions when network activity drops below a specified
@@ -28,6 +30,8 @@ interface with neon green accents and robust functionality for power users.
   virtual adapters or local traffic from interfering with accurate readings.
 - **Visual Feedback**: Real-time display of current download/upload speeds and a countdown timer before the action is
   executed.
+
+![Auto Exit System](DownCalcTimer2.png)
 
 ### 3. Modern User Interface
 

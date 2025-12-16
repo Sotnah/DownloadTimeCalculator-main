@@ -180,7 +180,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BlueHoverBrush}" />
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BlueHover1Brush}" />
                             <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -206,7 +206,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource RedAccentBrush}" />
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource RedAccent1Brush}" />
                             <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -327,7 +327,7 @@
                                 <BeginStoryboard Name="HoverEnter">
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetProperty="(Control.Foreground).(SolidColorBrush.Color)"
-                                                        To="#FF00FF41" Duration="0:0:0.3"/>
+                                                        To="#00ff41" Duration="0:0:0.3"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </MultiTrigger.EnterActions>
@@ -365,12 +365,12 @@
                                         </DoubleAnimation>
                                         <ColorAnimation Storyboard.TargetName="IndicatorBrush"
                                                         Storyboard.TargetProperty="Color"
-                                                        From="White" To="#FF00FF41" Duration="0:0:0.4" />
+                                                        From="White" To="#00FF41" Duration="0:0:0.4" />
                                         
                                         <!-- Glow Effect Fade In -->
                                         <DoubleAnimation Storyboard.TargetName="ContentSite"
                                                          Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)"
-                                                         From="0" To="50" Duration="0:0:0.5">
+                                                         From="0" To="25" Duration="0:0:0.5">
                                             <DoubleAnimation.EasingFunction>
                                                 <CubicEase EasingMode="EaseOut"/>
                                             </DoubleAnimation.EasingFunction>
@@ -381,7 +381,7 @@
 
                                         <!-- Foreground Fade to Green -->
                                         <ColorAnimation Storyboard.TargetProperty="(Control.Foreground).(SolidColorBrush.Color)"
-                                                        To="#FF00FF41" Duration="0:0:0.3"/>
+                                                        To="#00FF41" Duration="0:0:0.3"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>

@@ -185,11 +185,23 @@
                     </StackPanel>
                     
                     <TextBox Grid.Column="1"
-                             Text="{Binding AutoExitViewModel.ThresholdValue}"
+                             Text="{Binding AutoExitViewModel.ThresholdValue, UpdateSourceTrigger=PropertyChanged}"
                              Margin="0,0,5,0"
                              Height="25"
                              Tag="eg. 100"
-                             VerticalContentAlignment="Center"/>
+                             Validation.ErrorTemplate="{x:Null}"
+                             VerticalContentAlignment="Center"
+                             PreviewTextInput="NumberValidationTextBox">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AutoExitViewModel.IsThresholdError}" Value="True">
+                                        <Setter Property="BorderBrush" Value="Red"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                     <ComboBox Grid.Column="2"
                               SelectedIndex="{Binding AutoExitViewModel.ThresholdUnitIndex}"
                               Width="70"
@@ -221,11 +233,23 @@
                     </StackPanel>
                     
                     <TextBox Grid.Column="1"
-                             Text="{Binding AutoExitViewModel.DurationSeconds}"
+                             Text="{Binding AutoExitViewModel.DurationSeconds, UpdateSourceTrigger=PropertyChanged}"
                              Margin="0,0,5,0"
                              Height="25"
                              Tag="eg. 60"
-                             VerticalContentAlignment="Center"/>
+                             Validation.ErrorTemplate="{x:Null}"
+                             VerticalContentAlignment="Center"
+                             PreviewTextInput="NumberValidationTextBox">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AutoExitViewModel.IsDurationError}" Value="True">
+                                        <Setter Property="BorderBrush" Value="Red"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                     <TextBlock Grid.Column="2" 
                                Text="seconds" 
                                Foreground="{StaticResource LightGrayBrush}" 
