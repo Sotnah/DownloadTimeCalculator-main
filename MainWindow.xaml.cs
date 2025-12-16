@@ -31,7 +31,7 @@ namespace DownloadTimeCalculator
         {
             INetworkService networkService = new NetworkService();
             ISystemPowerService powerService = new PowerService();
-            
+
             _viewModel = new MainViewModel(networkService, powerService);
             this.DataContext = _viewModel;
         }
@@ -40,7 +40,7 @@ namespace DownloadTimeCalculator
         {
             // Get window handle
             IntPtr hwnd = new WindowInteropHelper(this).EnsureHandle();
-            
+
             // Set border color to black (0xFF000000 in ARGB format)
             int borderColor = unchecked((int)0xFF000000); // Black color
             DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref borderColor, sizeof(int));
