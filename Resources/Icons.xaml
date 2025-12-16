@@ -1,0 +1,9 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Icon Path Data -->
+    <Geometry x:Key="ComboBoxArrowIcon">M 0 0 L 4 4 L 8 0 Z</Geometry>
+    <Geometry x:Key="DownloadArrowIcon">M 0 0 L 4 4 L 8 0 Z</Geometry>
+    <Geometry x:Key="UploadArrowIcon">M 0 4 L 4 0 L 8 4 Z</Geometry>
+    <Geometry x:Key="InfoIcon">M11,9H13V7H11M11,20H13V11H11V20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z</Geometry>
+</ResourceDictionary>
+
