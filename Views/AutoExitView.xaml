@@ -282,30 +282,126 @@
                     </ToggleButton>
                 </Grid>
                 
-                <TextBlock x:Name="LblCountdown"
-                           Text="{Binding AutoExitViewModel.CountdownText}"
-                           FontSize="14"
-                           Foreground="{StaticResource NeonGreenBrush}"
-                           FontWeight="Bold"
-                           Margin="0,15,0,0"
-                           HorizontalAlignment="Center"
-                           MinHeight="20">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding AutoExitViewModel.CountdownText}" Value="">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                    <TextBlock.Effect>
-                        <DropShadowEffect Color="{StaticResource NeonGreen}"
-                                          BlurRadius="10"
-                                          ShadowDepth="0"
-                                          Opacity="0.4" />
-                    </TextBlock.Effect>
-                </TextBlock>
+                <!-- Status Display - Layered for Cross-Fade -->
+                <Grid Margin="0,15,0,0" MinHeight="25">
+                    
+                    <!-- LAYER 1: Waiting for input (Centered & Stable) -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                         <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Opacity" Value="0"/> <!-- Default Hidden -->
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AutoExitViewModel.IsWaitingForInput}" Value="True">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        
+                        <!-- Invisible Spacer to balance the dots on the right -->
+                        <TextBlock Text="..." FontSize="16" FontWeight="Bold" Visibility="Hidden" Width="25"/>
+                        
+                        <TextBlock Text="Waiting for input"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource LightGrayBrush}">
+                            <TextBlock.Effect>
+                                <DropShadowEffect Color="{StaticResource LightGray}" BlurRadius="5" ShadowDepth="0" Opacity="0.2"/>
+                            </TextBlock.Effect>
+                        </TextBlock>
+                        
+                        <!-- Actual Dots -->
+                        <TextBlock Text="{Binding AutoExitViewModel.StatusSuffix}"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource LightGrayBrush}"
+                                   Width="25">
+                            <TextBlock.Effect>
+                                <DropShadowEffect Color="{StaticResource LightGray}" BlurRadius="5" ShadowDepth="0" Opacity="0.2"/>
+                            </TextBlock.Effect>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!-- LAYER 2: Active Text (Shutdown in...) -->
+                    <TextBlock Text="{Binding AutoExitViewModel.StatusBase}"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <!-- Default Hidden -->
+                                <Setter Property="Opacity" Value="0"/>
+                                <!-- Color State Styles (Moved here from inside Triggers) -->
+                                <Setter Property="Foreground" Value="{StaticResource LightGrayBrush}"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="{StaticResource LightGray}" BlurRadius="5" ShadowDepth="0" Opacity="0.2"/>
+                                    </Setter.Value>
+                                </Setter>
+
+                                <Style.Triggers>
+                                    <!-- Show when NOT waiting -->
+                                    <DataTrigger Binding="{Binding AutoExitViewModel.IsWaitingForInput}" Value="False">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                    
+                                    <!-- Green Active State -->
+                                    <DataTrigger Binding="{Binding AutoExitViewModel.IsActionActive}" Value="True">
+                                         <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="#00FF41" Duration="0:0:0.5"/>
+                                                    <ColorAnimation Storyboard.TargetProperty="(TextBlock.Effect).(DropShadowEffect.Color)" To="#00FF41" Duration="0:0:0.5"/>
+                                                    <DoubleAnimation Storyboard.TargetProperty="(TextBlock.Effect).(DropShadowEffect.BlurRadius)" To="15" Duration="0:0:0.5"/>
+                                                    <DoubleAnimation Storyboard.TargetProperty="(TextBlock.Effect).(DropShadowEffect.Opacity)" To="0.6" Duration="0:0:0.5"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" To="#CCCCCC" Duration="0:0:0.5"/>
+                                                    <ColorAnimation Storyboard.TargetProperty="(TextBlock.Effect).(DropShadowEffect.Color)" To="#CCCCCC" Duration="0:0:0.5"/>
+                                                    <DoubleAnimation Storyboard.TargetProperty="(TextBlock.Effect).(DropShadowEffect.BlurRadius)" To="5" Duration="0:0:0.5"/>
+                                                    <DoubleAnimation Storyboard.TargetProperty="(TextBlock.Effect).(DropShadowEffect.Opacity)" To="0.2" Duration="0:0:0.5"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    
+                </Grid>
             </StackPanel>
         </Border>
     </Grid>

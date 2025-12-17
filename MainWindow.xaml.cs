@@ -13,8 +13,8 @@ namespace DownloadTimeCalculator
     {
         // P/Invoke declarations for DwmSetWindowAttribute
         // LibraryImport for DwmSetWindowAttribute
-        [LibraryImport("dwmapi.dll")]
-        private static partial int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
         private const int DWMWA_BORDER_COLOR = 34;
 

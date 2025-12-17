@@ -32,7 +32,7 @@ namespace DownloadTimeCalculator.ViewModels
         private string _currentTime = string.Empty;
         private string _downloadSpeed = "0 B/s";
         private string _uploadSpeed = "0 B/s";
-        private string _countdownText = string.Empty;
+
 
         public AutoExitViewModel(INetworkService networkService, ISystemPowerService powerService)
         {
@@ -97,7 +97,7 @@ namespace DownloadTimeCalculator.ViewModels
                 {
                     _lowSpeedStartTime = null;
                     _isShutdownPending = false;
-                    CountdownText = string.Empty;
+                    UpdateStatusState();
                 }
             }
         }
@@ -144,6 +144,11 @@ namespace DownloadTimeCalculator.ViewModels
                 {
                     if (value.HasValue)
                     {
+                        if (value.Value > 10000)
+                        {
+                            _thresholdValue = 10000;
+                            OnPropertyChanged(nameof(ThresholdValue));
+                        }
                         IsThresholdError = false;
                     }
                 }
@@ -165,30 +170,126 @@ namespace DownloadTimeCalculator.ViewModels
                 {
                     if (value.HasValue)
                     {
+                        if (value.Value > 86400)
+                        {
+                            _durationSeconds = 86400;
+                            OnPropertyChanged(nameof(DurationSeconds));
+                        }
                         IsDurationError = false;
                     }
                 }
             }
         }
 
-        public string CountdownText
-        {
-            get => _countdownText;
-            set => SetProperty(ref _countdownText, value);
-        }
 
         private void InitializeClock()
         {
-            _clockTimer = new DispatcherTimer();
-            _clockTimer.Interval = TimeSpan.FromSeconds(1);
-            _clockTimer.Tick += ClockTimer_Tick;
-            _clockTimer.Start();
+            if (_clockTimer == null)
+            {
+                _clockTimer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromSeconds(1)
+                };
+                _clockTimer.Tick += ClockTimer_Tick;
+            }
+            if (!_clockTimer.IsEnabled) _clockTimer.Start();
             ClockTimer_Tick(null, EventArgs.Empty);
+        }
+
+        private string _statusBase = "Waiting for input";
+        private string _statusSuffix = "";
+        private bool _isActionActive = false;
+        private bool _isWaitingForInput = true;
+        private int _dotCounter = 0;
+
+        public string StatusBase
+        {
+            get => _statusBase;
+            set => SetProperty(ref _statusBase, value);
+        }
+
+        public string StatusSuffix
+        {
+            get => _statusSuffix;
+            set => SetProperty(ref _statusSuffix, value);
+        }
+
+        public bool IsActionActive
+        {
+            get => _isActionActive;
+            set => SetProperty(ref _isActionActive, value);
+        }
+
+        public bool IsWaitingForInput
+        {
+            get => _isWaitingForInput;
+            set
+            {
+                if (SetProperty(ref _isWaitingForInput, value))
+                {
+                    // Reset suffix when leaving waiting state
+                    if (!value) StatusSuffix = "";
+                }
+            }
         }
 
         private void ClockTimer_Tick(object? sender, EventArgs e)
         {
             CurrentTime = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
+            UpdateStatusState();
+        }
+
+        private void UpdateStatusState()
+        {
+            // 1. Check for Validation Errors
+            bool hasErrors = !_thresholdValue.HasValue || !_durationSeconds.HasValue;
+
+            if (hasErrors)
+            {
+                IsWaitingForInput = true;
+                IsActionActive = false;
+                StatusBase = "Waiting for input";
+
+                // Animation Logic: "" -> "." -> ".." -> "..." -> ""
+                _dotCounter = (_dotCounter + 1) % 4;
+                StatusSuffix = new string('.', _dotCounter);
+
+                // Reset other states
+                _lowSpeedStartTime = null;
+                return;
+            }
+
+            // 2. Valid Inputs - Calculate Action Text
+            IsWaitingForInput = false; // Transitioning out of Waiting state
+            string actionName = _selectedPowerAction.ToString();
+            int duration = _durationSeconds ?? 0;
+
+            // 3. Check if Active (Auto Exit Enabled AND Low Speed Triggered)
+            if (_isAutoExitEnabled && !_isShutdownPending && _lowSpeedStartTime.HasValue)
+            {
+                // We are in countdown mode
+                IsActionActive = true;
+
+                // Recalculate remaining
+                double lowSpeedDuration = (DateTime.Now - _lowSpeedStartTime.Value).TotalSeconds;
+                int remainingSeconds = duration - (int)lowSpeedDuration;
+
+                if (remainingSeconds > 0)
+                {
+                    StatusBase = $"{actionName} in {remainingSeconds}s";
+                }
+                else
+                {
+                    StatusBase = "Performing Action...";
+                }
+                StatusSuffix = "";
+                return;
+            }
+
+            // 4. Default / Preview State (Valid but idle or high speed)
+            IsActionActive = false;
+            StatusBase = $"{actionName} in {duration}s";
+            StatusSuffix = "";
         }
 
         private void NetworkService_NetworkStatsUpdated(object? sender, NetworkStats stats)
@@ -196,58 +297,60 @@ namespace DownloadTimeCalculator.ViewModels
             DownloadSpeed = stats.FormattedDownloadSpeed;
             UploadSpeed = stats.FormattedUploadSpeed;
 
+            // Logic logic for tracking Low Speed
             if (_isAutoExitEnabled && !_isShutdownPending)
             {
-                CheckAutoExit(stats.DownloadSpeedBytesPerSecond);
+                CheckSpeedThreshold(stats.DownloadSpeedBytesPerSecond);
             }
+            else
+            {
+                // Reset if disabled
+                _lowSpeedStartTime = null;
+            }
+
+            // Force status update on network tick too for responsiveness? 
+            // Actually ClockTimer handles Animation (1s tick).
+            // Network tick is faster. The Countdown update should be smooth.
+            // Let's let ClockTimer handle visual updates to avoid spamming PropertyChanged events.
+            // But we need to update _lowSpeedStartTime here.
         }
 
-        private void CheckAutoExit(double downloadSpeedBytesPerSecond)
+        private void CheckSpeedThreshold(double downloadSpeedBytesPerSecond)
         {
-            DateTime currentTime = DateTime.Now;
-
-            // Ensure configuration is valid
-            if (!_thresholdValue.HasValue || !_durationSeconds.HasValue)
-            {
-                return;
-            }
+            if (!_thresholdValue.HasValue) return;
 
             // Calculate threshold in bytes/sec
             double thresholdBytes = _thresholdValue.Value * 1024; // Base KB
             if (_thresholdUnitIndex == 1) thresholdBytes *= 1024; // MB
 
-            // If download speed is below threshold
             if (downloadSpeedBytesPerSecond < thresholdBytes)
             {
-                // Start tracking low speed period
                 if (!_lowSpeedStartTime.HasValue)
                 {
-                    _lowSpeedStartTime = currentTime;
+                    _lowSpeedStartTime = DateTime.Now;
+                    // Trigger state update immediately to switch to Green instantly
+                    UpdateStatusState();
                 }
-                else
-                {
-                    // Check if low speed has persisted for the required duration
-                    double lowSpeedDuration = (currentTime - _lowSpeedStartTime.Value).TotalSeconds;
-                    int remainingSeconds = _durationSeconds.Value - (int)lowSpeedDuration;
 
-                    if (remainingSeconds > 0)
-                    {
-                        // Update countdown display
-                        CountdownText = $"Shutdown in {remainingSeconds}s";
-                    }
-                    else
+                // Check for completion
+                if (_durationSeconds.HasValue)
+                {
+                    double lowSpeedDuration = (DateTime.Now - _lowSpeedStartTime.Value).TotalSeconds;
+                    if (lowSpeedDuration >= _durationSeconds.Value)
                     {
                         _isShutdownPending = true;
-                        CountdownText = "Performing Action...";
                         _powerService.PerformAction(_selectedPowerAction);
                     }
                 }
             }
             else
             {
-                // Download speed is above threshold, reset tracking
-                _lowSpeedStartTime = null;
-                CountdownText = string.Empty;
+                if (_lowSpeedStartTime.HasValue)
+                {
+                    _lowSpeedStartTime = null;
+                    // Trigger update immediately to switch back linearly
+                    UpdateStatusState();
+                }
             }
         }
 
