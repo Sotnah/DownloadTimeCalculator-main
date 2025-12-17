@@ -118,6 +118,7 @@
         <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="Consolas" />
+        <Setter Property="Height" Value="25" />
     </Style>
     
     <!-- TextBox Style -->
@@ -131,6 +132,7 @@
         <Setter Property="FontSize" Value="15" />
         <Setter Property="FontFamily" Value="Consolas" />
         <Setter Property="CaretBrush" Value="{StaticResource WhiteBrush}" />
+        <Setter Property="Height" Value="25" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -322,8 +324,6 @@
                                 <Condition Property="IsSelected" Value="False"/>
                             </MultiTrigger.Conditions>
                             <MultiTrigger.EnterActions>
-                                <StopStoryboard BeginStoryboardName="HoverExit"/>
-                                <StopStoryboard BeginStoryboardName="SelectedExit"/>
                                 <BeginStoryboard Name="HoverEnter">
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetProperty="(Control.Foreground).(SolidColorBrush.Color)"
@@ -332,7 +332,6 @@
                                 </BeginStoryboard>
                             </MultiTrigger.EnterActions>
                             <MultiTrigger.ExitActions>
-                                <StopStoryboard BeginStoryboardName="HoverEnter"/>
                                 <BeginStoryboard Name="HoverExit">
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetProperty="(Control.Foreground).(SolidColorBrush.Color)"
@@ -347,9 +346,6 @@
                             <Setter TargetName="SelectedIndicator" Property="Background" Value="{StaticResource NeonGreenBrush}"/>
                             <Setter TargetName="SelectedIndicator" Property="Visibility" Value="Visible"/>
                             <Trigger.EnterActions>
-                                <StopStoryboard BeginStoryboardName="HoverEnter"/>
-                                <StopStoryboard BeginStoryboardName="HoverExit"/>
-                                <StopStoryboard BeginStoryboardName="SelectedExit"/>
                                 <BeginStoryboard Name="SelectedEnter">
                                     <Storyboard>
                                         <!-- Indicator Animations -->
@@ -386,7 +382,6 @@
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
                             <Trigger.ExitActions>
-                                <StopStoryboard BeginStoryboardName="SelectedEnter"/>
                                 <BeginStoryboard Name="SelectedExit">
                                     <Storyboard>
                                         <!-- Indicator Fade Out -->

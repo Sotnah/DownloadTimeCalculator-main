@@ -12,8 +12,9 @@ namespace DownloadTimeCalculator
     public partial class MainWindow : Window
     {
         // P/Invoke declarations for DwmSetWindowAttribute
-        [DllImport("dwmapi.dll")]
-        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+        // LibraryImport for DwmSetWindowAttribute
+        [LibraryImport("dwmapi.dll")]
+        private static partial int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
         private const int DWMWA_BORDER_COLOR = 34;
 
@@ -42,8 +43,10 @@ namespace DownloadTimeCalculator
             IntPtr hwnd = new WindowInteropHelper(this).EnsureHandle();
 
             // Set border color to black (0xFF000000 in ARGB format)
+            // Set border color to black (0xFF000000 in ARGB format)
             int borderColor = unchecked((int)0xFF000000); // Black color
-            DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref borderColor, sizeof(int));
+            int result = DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref borderColor, sizeof(int));
+            // Just ignoring result for now as it is cosmetic, but assigning satisfies the IDE warning.
         }
 
         private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)

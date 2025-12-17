@@ -133,8 +133,7 @@
 
                     <ComboBox Grid.Column="1"
                               ItemsSource="{Binding AutoExitViewModel.PowerActions}"
-                              SelectedItem="{Binding AutoExitViewModel.SelectedPowerAction}"
-                              Height="25"/>
+                              SelectedItem="{Binding AutoExitViewModel.SelectedPowerAction}"/>
                 </Grid>
 
                 <!-- Network Adapter -->
@@ -159,8 +158,7 @@
                     
                     <ComboBox Grid.Column="1"
                               ItemsSource="{Binding AutoExitViewModel.NetworkAdapters}"
-                              SelectedItem="{Binding AutoExitViewModel.SelectedNetworkAdapter}"
-                              Height="25"/>
+                              SelectedItem="{Binding AutoExitViewModel.SelectedNetworkAdapter}"/>
                 </Grid>
 
                 <!-- Speed Threshold -->
@@ -185,9 +183,8 @@
                     </StackPanel>
                     
                     <TextBox Grid.Column="1"
-                             Text="{Binding AutoExitViewModel.ThresholdValue, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding AutoExitViewModel.ThresholdValue, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
                              Margin="0,0,5,0"
-                             Height="25"
                              Tag="eg. 100"
                              Validation.ErrorTemplate="{x:Null}"
                              VerticalContentAlignment="Center"
@@ -204,8 +201,7 @@
                     </TextBox>
                     <ComboBox Grid.Column="2"
                               SelectedIndex="{Binding AutoExitViewModel.ThresholdUnitIndex}"
-                              Width="70"
-                              Height="25">
+                              Width="70">
                         <ComboBoxItem Content="KB/s" />
                         <ComboBoxItem Content="MB/s" />
                     </ComboBox>
@@ -233,9 +229,8 @@
                     </StackPanel>
                     
                     <TextBox Grid.Column="1"
-                             Text="{Binding AutoExitViewModel.DurationSeconds, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding AutoExitViewModel.DurationSeconds, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
                              Margin="0,0,5,0"
-                             Height="25"
                              Tag="eg. 60"
                              Validation.ErrorTemplate="{x:Null}"
                              VerticalContentAlignment="Center"

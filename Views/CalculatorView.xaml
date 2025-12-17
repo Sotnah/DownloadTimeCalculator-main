@@ -55,7 +55,9 @@
                     <TextBox x:Name="TxtFileSize"
                              Text="{Binding CalculatorViewModel.FileSizeText, UpdateSourceTrigger=PropertyChanged}"
                              Margin="0,0,10,0"
-                             Tag="eg. 50" />
+                             Tag="eg. 50"
+                             PreviewTextInput="NumberValidationTextBox"
+                             ToolTip="Enter the size of the file." />
                     <ComboBox x:Name="ComboSizeUnit"
                               SelectedIndex="{Binding CalculatorViewModel.SizeUnitIndex}"
                               MinWidth="100"
@@ -97,7 +99,9 @@
                     <TextBox x:Name="TxtSpeed"
                              Text="{Binding CalculatorViewModel.SpeedText, UpdateSourceTrigger=PropertyChanged}"
                              Margin="0,0,10,0"
-                             Tag="eg. 100" />
+                             Tag="eg. 100"
+                             PreviewTextInput="NumberValidationTextBox"
+                             ToolTip="Enter your internet connection speed." />
                     <ComboBox x:Name="ComboSpeedUnit"
                               SelectedIndex="{Binding CalculatorViewModel.SpeedUnitIndex}"
                               MinWidth="100"
