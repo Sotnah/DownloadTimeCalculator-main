@@ -13,8 +13,8 @@ namespace DownloadTimeCalculator
     {
         // P/Invoke declarations for DwmSetWindowAttribute
         // LibraryImport for DwmSetWindowAttribute
-        [DllImport("dwmapi.dll")]
-        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+        [LibraryImport("dwmapi.dll")]
+        private static partial int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
         private const int DWMWA_BORDER_COLOR = 34;
 
@@ -45,7 +45,7 @@ namespace DownloadTimeCalculator
             // Set border color to black (0xFF000000 in ARGB format)
             // Set border color to black (0xFF000000 in ARGB format)
             int borderColor = unchecked((int)0xFF000000); // Black color
-            int result = DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref borderColor, sizeof(int));
+            DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref borderColor, sizeof(int));
             // Just ignoring result for now as it is cosmetic, but assigning satisfies the IDE warning.
         }
 

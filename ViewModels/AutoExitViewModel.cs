@@ -114,7 +114,7 @@ namespace DownloadTimeCalculator.ViewModels
             set => SetProperty(ref _isDurationError, value);
         }
 
-        public IEnumerable<PowerActionType> PowerActions => Enum.GetValues(typeof(PowerActionType)).Cast<PowerActionType>();
+        public static IEnumerable<PowerActionType> PowerActions => Enum.GetValues(typeof(PowerActionType)).Cast<PowerActionType>();
         public IEnumerable<string> NetworkAdapters => _networkService.GetAvailableAdapters();
 
         public string? SelectedNetworkAdapter
@@ -248,7 +248,7 @@ namespace DownloadTimeCalculator.ViewModels
             {
                 IsWaitingForInput = true;
                 IsActionActive = false;
-                StatusBase = "Waiting for input";
+                // StatusBase = "Waiting for input"; // REMOVED: Keep old text for Fade Out transition
 
                 // Animation Logic: "" -> "." -> ".." -> "..." -> ""
                 _dotCounter = (_dotCounter + 1) % 4;
